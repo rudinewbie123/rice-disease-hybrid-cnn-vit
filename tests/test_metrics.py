@@ -26,7 +26,7 @@ def test_auc_not_reported_if_class_missing():
 
 @pytest.mark.parametrize("probabilities", [
     np.array([[.5,.5],[.2,.8]]),
-    np.array([[.5,.5,.0],[.2,.8,.0]]),
+    np.array([[.5,.4,.0],[.2,.8,.0]]),
     np.array([[.5,.5,np.nan],[.2,.8,0.0]]),
 ])
 def test_invalid_probabilities_raise(probabilities):
