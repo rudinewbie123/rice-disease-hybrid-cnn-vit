@@ -12,3 +12,7 @@ runs/
 outputs/
 data/*
 !data/.gitkeep
+
+# Kaggle credentials must never be committed
+kaggle.json
+.kaggle/
