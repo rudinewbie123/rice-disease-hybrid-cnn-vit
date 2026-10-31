@@ -32,7 +32,7 @@ def vit_attention_rollout(model, image):
 
     Torchvision's stock EncoderBlock calls MultiheadAttention with need_weights=False.
     This function reconstructs attention probabilities from the module's actual Q/K
-    projections using a forward-pre-hook, without modifying model weights or outputs.
+    projections using a forward-pre-hook, without modifying model weights or outputs. It supports both sequence-first and batch-first MultiheadAttention layouts.
     """
     model.eval()
     layers = getattr(getattr(model, "encoder", None), "layers", None)
@@ -41,7 +41,7 @@ def vit_attention_rollout(model, image):
     captured = []
 
     def capture_attention(module, args):
-        query = args[0]  # torchvision ViT uses sequence-first: [tokens, batch, embedding]
+        query = args[0]  # torchvision releases may use [batch, tokens, embedding] or sequence-first.
         if query.ndim != 3:
             raise ValueError("Unexpected ViT attention input shape.")
         embed_dim = query.shape[-1]
@@ -51,9 +51,14 @@ def vit_attention_rollout(model, image):
             raise NotImplementedError("ViT attention requires packed QKV projection weights.")
         qkv = nnf.linear(query, module.in_proj_weight, module.in_proj_bias)
         q, k, _ = qkv.chunk(3, dim=-1)
-        batch = query.shape[1]
-        q = q.reshape(query.shape[0], batch, heads, head_dim).permute(1, 2, 0, 3)
-        k = k.reshape(query.shape[0], batch, heads, head_dim).permute(1, 2, 0, 3)
+        if module.batch_first:
+            batch, tokens, _ = query.shape
+            q = q.reshape(batch, tokens, heads, head_dim).permute(0, 2, 1, 3)
+            k = k.reshape(batch, tokens, heads, head_dim).permute(0, 2, 1, 3)
+        else:
+            tokens, batch, _ = query.shape
+            q = q.reshape(tokens, batch, heads, head_dim).permute(1, 2, 0, 3)
+            k = k.reshape(tokens, batch, heads, head_dim).permute(1, 2, 0, 3)
         scores = torch.matmul(q / (head_dim ** 0.5), k.transpose(-2, -1))
         captured.append(scores.softmax(dim=-1).detach())
 
