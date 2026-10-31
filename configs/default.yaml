@@ -6,9 +6,18 @@ epochs: 30
 learning_rate: 0.0001
 weight_decay: 0.0001
 num_classes: 3
-class_names: [bacterial_leaf_blight, brown_spot, leaf_smut]
+class_names: [blast, blight, tungro]
+dataset:
+  provider: kaggle
+  reference_notebook: https://www.kaggle.com/code/rahmi21/klasifikasi-penyakit-padi-melalui-citra-daun
+  source_dataset_title: Classification of Rice Diseases Using Leaf Images
+  included_auxiliary_dataset: false
+  class_names: [blast, blight, tungro]
+  split_strategy: stratified
+  split_ratios: [0.70, 0.15, 0.15]
+  random_seed: 42
 data_root: /content/drive/MyDrive/rice_disease_dataset
-output_dir: /content/rice_disease_outputs
+output_dir: /content/drive/MyDrive/rice_disease_outputs
 split_dir: splits
 train_csv: train.csv
 val_csv: val.csv
