@@ -49,7 +49,7 @@ The script:
 - creates stratified 70% train, 15% validation, and 15% test manifests;
 - writes `dataset_audit.json` with the observed class and split counts.
 
-The split utility requires at least three unique images in each class. For a robust experiment, verify that every class has enough independent images. Near-duplicate images, images from the same plant/session, and source leakage still require a separate visual/group-level audit; exact hashes alone cannot detect all such relationships.
+The split utility requires at least 14 unique images in each class so both validation and test subsets can retain all three classes under the two-stage stratified 70/15/15 split. For a robust experiment, verify that every class has enough independent images. Near-duplicate images, images from the same plant/session, and source leakage still require a separate visual/group-level audit; exact hashes alone cannot detect all such relationships.
 
 ## Install and run
 
