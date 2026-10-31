@@ -69,8 +69,8 @@ def discover_images(source_dir: Path, data_root: Path) -> tuple[list[dict], dict
     missing = set(CLASS_ALIASES) - set(counts)
     if missing:
         raise ValueError(f"Missing required class folders/images: {sorted(missing)}; found {dict(counts)}")
-    if any(count < 4 for count in counts.values()):
-        raise ValueError(f"Each class needs at least 4 unique images for stratified 70/15/15 splitting: {dict(counts)}")
+    if any(count < 14 for count in counts.values()):
+        raise ValueError(f"Each class needs at least 14 unique images for stratified 70/15/15 splitting: {dict(counts)}")
     return records, {"unique_image_counts": dict(sorted(counts.items())), "ignored_images": ignored}
 
 
