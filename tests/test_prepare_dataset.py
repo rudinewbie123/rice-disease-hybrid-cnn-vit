@@ -38,12 +38,12 @@ def test_exact_duplicate_is_removed_before_split(tmp_path):
     root = tmp_path / "drive_data"
     source = root / "raw" / "rice"
     for class_index, label in enumerate(("Blast", "Blight", "Tungro")):
-        for i in range(4):
+        for i in range(14):
             _make_image(source / label / f"{i}.png", class_index * 70 + i)
     shutil.copyfile(source / "Blast" / "0.png", source / "Blast" / "duplicate.png")
     audit = prepare_dataset(source, root, root / "splits", seed=7)
-    assert audit["unique_image_counts"]["blast"] == 4
-    assert audit["total_unique_images"] == 12
+    assert audit["unique_image_counts"]["blast"] == 14
+    assert audit["total_unique_images"] == 42
 
 
 def test_same_image_in_different_classes_is_rejected(tmp_path):
