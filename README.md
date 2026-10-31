@@ -66,3 +66,26 @@ The three models use the same CSV split manifests. Validation macro-F1 selects c
 ## Research integrity
 
 No raw dataset, synthetic sample, trained checkpoint, or experimental result is included in this repository. A code test is not a model experiment. Training and test metrics must only be reported after running the pipeline against the downloaded dataset and retaining the generated audit and split manifests.
+
+
+## Evaluation and explainability outputs
+
+Evaluate a checkpoint on the held-out test split:
+
+```bash
+python scripts/evaluate.py --checkpoint PATH_TO_BEST_PT --config configs/default.yaml --split test
+```
+
+This writes `metrics.json`, `classification_report.json`, `confusion_matrix.png`, and `roc_curves_ovr.png` under the model/split output directory. Multiclass ROC-AUC is one-vs-rest; per-class AUC is reported as null when that class lacks positive or negative support in the selected split.
+
+Generate explainability maps for actual validation or test images:
+
+```bash
+python scripts/explain.py --checkpoint PATH_TO_BEST_PT --config configs/default.yaml --split test --max-samples 12 --method all
+```
+
+- EfficientNet-B0: Grad-CAM on the final convolutional feature stage.
+- ViT-B/16: attention rollout reconstructed from the actual query/key projections in each torchvision transformer block.
+- Hybrid CNN–ViT: Grad-CAM on the CNN feature encoder and attention rollout on its transformer blocks.
+
+Outputs are saved in the corresponding model/split `explainability/` directory. These maps are qualitative diagnostic aids, not causal explanations or standalone evidence of model validity. Use the same held-out split for comparable reporting and do not select hyperparameters based on test-set results.
