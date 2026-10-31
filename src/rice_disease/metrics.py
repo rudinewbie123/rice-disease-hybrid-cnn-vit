@@ -15,7 +15,6 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
-from sklearn.preprocessing import label_binarize
 
 
 def calculate_metrics(y_true, probabilities, class_names):
@@ -57,7 +56,7 @@ def calculate_metrics(y_true, probabilities, class_names):
         "confusion_matrix": matrix.tolist(),
     }
 
-    binary = label_binarize(y, classes=list(range(n_classes)))
+    binary = (y[:, None] == np.arange(n_classes)[None, :]).astype(int)
     per_class_auc = {}
     valid_auc = []
     for index, name in enumerate(names):
@@ -98,7 +97,7 @@ def save_roc_curves(y_true, probabilities, class_names, path):
     """Save one-vs-rest ROC curves; omit classes without positive/negative support."""
     y = np.asarray(y_true, dtype=int)
     probs = np.asarray(probabilities, dtype=float)
-    binary = label_binarize(y, classes=list(range(len(class_names))))
+    binary = (y[:, None] == np.arange(len(class_names))[None, :]).astype(int)
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     fig, ax = plt.subplots(figsize=(7, 6))
