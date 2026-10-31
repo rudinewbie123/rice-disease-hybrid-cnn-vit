@@ -1,0 +1,17 @@
+seed: 42
+image_size: 224
+batch_size: 32
+num_workers: 2
+epochs: 30
+learning_rate: 0.0001
+weight_decay: 0.0001
+num_classes: 3
+class_names: [bacterial_leaf_blight, brown_spot, leaf_smut]
+data_root: /content/drive/MyDrive/rice_disease_dataset
+output_dir: /content/rice_disease_outputs
+split_dir: splits
+train_csv: train.csv
+val_csv: val.csv
+test_csv: test.csv
+model: hybrid
+pretrained: true
